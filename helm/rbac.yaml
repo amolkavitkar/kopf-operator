@@ -1,0 +1,112 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: meetup-operator-account
+  namespace: meetup
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: meetup-operator-role-namespaced
+  namespace: meetup
+rules:
+- apiGroups:
+  - meetup.com
+  resources:
+  - kopfpeerings
+  verbs:
+  - list
+  - watch
+  - patch
+  - get
+- apiGroups:
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - meetup.com
+  resources:
+  - meetup-operators
+  - meetupops
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - pods
+  verbs:
+  - get
+  - create
+  - delete
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: meetup-operator-role-cluster
+rules:
+- apiGroups:
+  - meetup.com
+  resources:
+  - meetupops
+  verbs:
+  - list
+  - watch
+  - patch
+  - get
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - list
+  - get
+- apiGroups:
+  - meetup.com
+  resources:
+  - vcpe-operators
+  verbs:
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: meetup-operator-rolebinding-namespaced
+  namespace: meetup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: meetup-operator-role-namespaced
+subjects:
+- kind: ServiceAccount
+  name: meetup-operator-account
+  namespace: meetup
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: meetup-operator-rolebinding-cluster
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meetup-operator-role-cluster
+subjects:
+- kind: ServiceAccount
+  name: meetup-operator-account
+  namespace: meetup
+---

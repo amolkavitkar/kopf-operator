@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meetup-operator
+  namespace: meetup
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      application: meetup-operator
+  template:
+    metadata:
+      labels:
+        application: meetup-operator
+    spec:
+      serviceAccountName: meetup-operator-account
+      containers:
+      - name: meetup-operator
+        image: meetup-operator:v0.0.1
+      terminationGracePeriodSeconds: 3
