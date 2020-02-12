@@ -1,0 +1,5 @@
+apiVersion: meetup.com/v1
+kind: MeetUpOp
+metadata:
+  name: my-meetup-1
+  namespace: meetup
